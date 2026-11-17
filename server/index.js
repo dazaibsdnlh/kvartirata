@@ -336,4 +336,5 @@ app.use((error, req, res, next) => {
   if (status >= 500) console.error(error);
   res.status(status).json({ error: error.code === 'LIMIT_FILE_SIZE' ? 'Снимката трябва да е до 3 MB.' : status >= 500 ? 'Възникна грешка в сървъра.' : error.message });
 });
-app.listen(port, '127.0.0.1', () => console.log(`Квартирата: http://127.0.0.1:${port}`));
+const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : '127.0.0.1';
+app.listen(port, host, () => console.log(`Квартирата: http://127.0.0.1:${port}`));
