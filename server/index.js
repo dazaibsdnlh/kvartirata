@@ -9,6 +9,7 @@ const app = express();
 const port = Number(process.env.PORT || 3001);
 const uploadDir = resolve(dataDir, 'uploads');
 mkdirSync(uploadDir, { recursive: true });
+app.set('trust proxy', 1);
 app.disable('x-powered-by');
 app.use(express.json({ limit: '100kb' }));
 app.use('/uploads', express.static(uploadDir, { dotfiles: 'deny', index: false, maxAge: '1d' }));

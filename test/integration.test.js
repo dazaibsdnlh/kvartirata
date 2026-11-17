@@ -17,7 +17,7 @@ test('authentication, payments, history and leaderboard', async () => {
   let log = '';
   function start() {
     const process = spawn(globalThis.process.execPath, ['server/index.js'], {
-      env: { ...globalThis.process.env, PORT: String(port), DATA_DIR: dir, ADMIN_USERNAME: 'tester', ADMIN_PASSWORD: 'a-strong-test-password', NODE_ENV: 'test' },
+      env: { ...globalThis.process.env, PORT: String(port), DATA_DIR: dir, ADMIN_USERNAME: 'tester', ADMIN_PASSWORD: 'a-strong-test-password', ALLOWED_ORIGINS: 'https://kvartirata.onrender.com', NODE_ENV: 'test' },
       stdio: 'pipe'
     });
     process.stderr.on('data', data => { log += data; });
@@ -43,6 +43,9 @@ test('authentication, payments, history and leaderboard', async () => {
     assert.equal((await request('/people', 'POST', { name: 'Test' })).status, 401);
     assert.equal((await request('/login', 'POST', { username: 'tester', password: 'bad' })).status, 401);
     assert.equal((await request('/login', 'POST', { username: 'tester', password: 'a-strong-test-password' }, { headers: { origin: 'https://evil.example' } })).status, 403);
+    assert.equal((await request('/login', 'POST', { username: 'tester', password: 'a-strong-test-password' }, {
+      headers: { origin: 'https://kvartirata.onrender.com' }
+    })).status, 200);
     assert.equal((await request('/login', 'POST', { username: 'tester', password: 'a-strong-test-password' })).status, 200);
     assert.equal((await request('/people', 'POST')).status, 400);
     const person = (await request('/people', 'POST', { name: 'Ива', details: '', image: null })).data.id;
